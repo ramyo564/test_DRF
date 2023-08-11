@@ -21,6 +21,6 @@ class ArticleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Article
 
-    title = factory.Sequence(lambda n: "test_article_name_%d" % n)
+    title = factory.Faker('sentence')
     content = factory.Faker('paragraph', nb_sentences=3)
     author = factory.SubFactory(CustomUserFactory)

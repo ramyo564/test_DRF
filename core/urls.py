@@ -9,7 +9,7 @@ from articles import views as articles_view
 router = DefaultRouter()
 router.register(r"user", users_view.UserViewSet)
 router.register(r"article", articles_view.ArticleViewSet)
-
+router.register(r"get_article", articles_view.ArticleListViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),

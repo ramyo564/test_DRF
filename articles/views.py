@@ -4,6 +4,17 @@ from rest_framework.decorators import action
 from .models import Article
 from .serializers import ArticleSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 2
+
+
+class ArticleListViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    pagination_class = CustomPagination
 
 
 class ArticleViewSet(viewsets.ViewSet):
