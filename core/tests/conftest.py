@@ -4,8 +4,10 @@ from rest_framework.test import APIClient
 
 from .factories import (
        CustomUserFactory,
+       ArticleFactory,
 )
 register(CustomUserFactory)
+register(ArticleFactory)
 
 
 @pytest.fixture

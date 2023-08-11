@@ -8,7 +8,7 @@ pytestmark = pytest.mark.django_db
 class TestUserEndpoints:
 
     def test_user_registration(self):
-        register_endpoint = "/api/user/register"
+        register_endpoint = "/api/user/register/"
         client = APIClient()
         data = {
             "email": "test@example.com",
@@ -22,9 +22,9 @@ class TestUserEndpoints:
 
         assert response.status_code == status.HTTP_201_CREATED
 
-    def test_user_login(self, custom_user_factory):
-        register_endpoint = "/api/user/register"
-        login_endpoint = "/api/user/login"
+    def test_user_login(self):
+        register_endpoint = "/api/user/register/"
+        login_endpoint = "/api/user/login/"
 
         # Register the user
         client = APIClient()
@@ -56,4 +56,4 @@ class TestUserEndpoints:
         assert response.status_code == status.HTTP_200_OK
         assert "access_token" in response.data
         assert "refresh_token" in response.data
-        print(f"response - data {response.data}")
+        # print(f"response - data {response.data}")

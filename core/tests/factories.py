@@ -1,5 +1,6 @@
 import factory
 from users.models import CustomUser
+from articles.models import Article
 
 
 class CustomUserFactory(factory.django.DjangoModelFactory):
@@ -14,3 +15,12 @@ class CustomUserFactory(factory.django.DjangoModelFactory):
     is_admin = False
     is_staff = False
     is_superuser = False
+
+
+class ArticleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Article
+
+    title = factory.Sequence(lambda n: "test_article_name_%d" % n)
+    content = factory.Faker('paragraph', nb_sentences=3)
+    author = factory.SubFactory(CustomUserFactory)
