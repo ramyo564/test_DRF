@@ -7,7 +7,7 @@ pytestmark = pytest.mark.django_db
 
 class TestArticleEndpoints:
     # create post
-    def test_create_post(self):
+    def test_create_post(self, article_factory):
         register_endpoint = "/api/user/register/"
         login_endpoint = "/api/user/login/"
 
@@ -65,6 +65,22 @@ class TestArticleEndpoints:
             response = article_response
 
         assert article_response.status_code == status.HTTP_201_CREATED
+
+        # Update the article using PATCH method
+        article_id = article_response.data['id']
+        update_endpoint = f"/api/article/{article_id}/update_article/"
+        update_data = {
+            "title": "Updated Test Article",
+            "content": "This is the updated test article content.",
+        }
+        update_response = client.patch(
+            update_endpoint,
+            update_data,
+            HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
+        assert update_response.status_code == status.HTTP_200_OK
+        assert update_response.data["title"] == update_data["title"]
+        assert update_response.data["content"] == update_data["content"]
 
 
 class GetArticleList:

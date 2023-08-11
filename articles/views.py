@@ -38,3 +38,19 @@ class ArticleViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['patch'])
+    def update_article(self, request, pk=None):
+        article = Article.objects.get(pk=pk)
+
+        if article.author != request.user:
+            return Response(
+                {'detail': 'You do not have permission to update this article.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = ArticleSerializer(article, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
