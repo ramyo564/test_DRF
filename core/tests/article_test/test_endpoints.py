@@ -66,7 +66,7 @@ class TestArticleEndpoints:
 
         assert article_response.status_code == status.HTTP_201_CREATED
 
-        # Update the article using PATCH method
+        # Update the article using PATCH method with id
         article_id = article_response.data['id']
         update_endpoint = f"/api/article/{article_id}/update_article/"
         update_data = {
@@ -81,6 +81,16 @@ class TestArticleEndpoints:
         assert update_response.status_code == status.HTTP_200_OK
         assert update_response.data["title"] == update_data["title"]
         assert update_response.data["content"] == update_data["content"]
+
+        # Delete the article using Delete method with id
+        article_id = article_response.data['id']
+        delete_endpoint = f"/api/article/{article_id}/delete_article/"
+
+        delete_response = client.delete(
+            delete_endpoint,
+            HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
 
 
 class GetArticleList:

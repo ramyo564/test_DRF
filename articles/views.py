@@ -54,3 +54,16 @@ class ArticleViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['delete'])
+    def delete_article(self, request, pk=None):
+        article = Article.objects.get(pk=pk)
+
+        if article.author != request.user:
+            return Response(
+                {'detail': 'You do not have permission to delete this article.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        article.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
