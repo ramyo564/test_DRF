@@ -21,3 +21,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
         return user
+
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate_email(self, value):
+        if "@" not in value:
+            raise serializers.ValidationError("이메일 주소에 @가 포함되어야 합니다.")
+        return value
+
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("비밀번호를 다시 한 번 확인해 주세요")
+        return value

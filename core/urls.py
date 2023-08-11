@@ -7,6 +7,7 @@ from users import views
 
 router = DefaultRouter()
 router.register(r"user", views.UserRegistrationViewSet)
+router.register(r"user", views.UserLoginViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
