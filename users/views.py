@@ -14,11 +14,11 @@ from .serializers import UserLoginSerializer
 User = get_user_model()
 
 
-class UserRegistrationViewSet(ViewSet):
+class UserViewSet(ViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
 
-    @action(detail=False, methods=['POST'])
+    @action(detail=False, methods=['POST'], url_path='register')
     def register(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -35,11 +35,6 @@ class UserRegistrationViewSet(ViewSet):
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserLoginViewSet(ViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserLoginSerializer
 
     @action(detail=False, methods=['POST'])
     def login(self, request):

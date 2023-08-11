@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.core.validators import MinLengthValidator
 
 
 class CustomUserManager(BaseUserManager):
@@ -24,7 +25,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser):
     # fields
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    password = models.CharField(max_length=128, validators=[MinLengthValidator(8)])
 
     # boolean
     is_active = models.BooleanField(default=True)
