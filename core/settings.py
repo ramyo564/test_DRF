@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -19,8 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-uuy^a395%$pujr991+ou&*sj@=$q^gal1i6cy0t&lycpye4^)i'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -81,25 +82,46 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
+#  로컬 테스트
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+# articles, users 각각 폴더 안의 migrations 의 __init__.py 를 제외한 0001_initial.py 파일들을 삭제해주세요
+# 로컬 혹은 mysql을 연결한 후 python manage.py makemigrations -> python manage.py migrate 를 실행해주시면 됩니다.
+# 위에 있는 "os.environ.get("SECRET_KEY"" 는 비활성화, 아래의 SECRET_KEY와 t설정에 맞는 데이터베이스를 활성화 해주세요
+
+# SECRET_KEY = 'django-insecure-uuy^a395%$pujr991+ou&*sj@=$q^gal1i6cy0t&lycpye4^)i'
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+# MySql 테스트
 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'wanted',
+#         'NAME': 'name 입력',
 #         'USER': 'root',
-#         'PASSWORD': '1234',
+#         'PASSWORD': 'password 입력',
 #         'HOST': 'localhost',  # 또는 MySQL 호스트 주소
 #         'PORT': '3306',       # MySQL 포트 번호
 #     }
 # }
+
+# local MySql 테스트
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'wanted',
+        'USER': 'root',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',  # 또는 MySQL 호스트 주소
+        'PORT': '3306',       # MySQL 포트 번호
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -134,7 +156,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, "core/static")
 STATIC_URL = 'static/'
 
 # Default primary key field type
