@@ -5,6 +5,7 @@ from .models import Article
 from .serializers import ArticleSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import serializers
 
 
 class CustomPagination(PageNumberPagination):
@@ -22,6 +23,22 @@ class ArticleListViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     pagination_class = CustomPagination
+
+    def get_serializer_class(self):
+        """
+        게시글을 조회하는 데 사용할 시리얼라이저 클래스를 반환합니다.
+
+        Returns:
+            CustomArticleSerializer: 'author' 필드를 추가한 시리얼라이저 클래스입니다.
+        """
+        class CustomArticleSerializer(serializers.ModelSerializer):
+            author = serializers.CharField(source='author.email', read_only=True)
+
+            class Meta:
+                model = Article
+                fields = '__all__'
+
+        return CustomArticleSerializer
 
 
 class ArticleViewSet(viewsets.ViewSet):
@@ -90,7 +107,7 @@ class ArticleViewSet(viewsets.ViewSet):
 
         if article.author != request.user:
             return Response(
-                {'detail': 'You do not have permission to update this article.'},
+                {'detail': '해당 글을 업데이트할 권한이 없습니다.'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -118,9 +135,12 @@ class ArticleViewSet(viewsets.ViewSet):
 
         if article.author != request.user:
             return Response(
-                {'detail': 'You do not have permission to delete this article.'},
+                {'detail': '해당 글을 삭제할 권한이 없습니다.'},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         article.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
