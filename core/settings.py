@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
+
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +41,7 @@ INSTALLED_APPS = [
     # External
     'rest_framework',
     'rest_framework_simplejwt',
-    "drf_spectacular",
+    'drf_spectacular',
 
 
     # Internal
@@ -82,6 +83,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 SECRET_KEY = os.environ.get("SECRET_KEY")
+
+
+# # test
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mysql.connector.django',
+#         'NAME': 'wanted',
+#         'USER': 'root',
+#         'PASSWORD': '1234',
+#         'HOST': 'localhost',  # 예: 'localhost'
+#         'PORT': '3306',  # 예: '3306'
+#     }
+# }
 
 #  로컬 테스트
 
