@@ -56,4 +56,31 @@ class TestUserEndpoints:
         assert response.status_code == status.HTTP_200_OK
         assert "access_token" in response.data
         assert "refresh_token" in response.data
-        # print(f"response - data {response.data}")
+
+        # Login with wrong email
+        login_data = {
+            "email": "test1@exaas.com",
+            "password": "testpassword",
+        }
+        login_response = client.post(login_endpoint, login_data)
+        if login_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
+            redirect_url = login_response.url
+            response = client.post(redirect_url, login_data, format="json")
+        else:
+            response = login_response
+        assert response.data == {'error': '이메일 혹은 비밀번호가 유효하지 않습니다.'}
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+        # Login with wrong password
+        login_data = {
+            "email": "test@example.com",
+            "password": "testpasswor222d",
+        }
+        login_response = client.post(login_endpoint, login_data)
+        if login_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
+            redirect_url = login_response.url
+            response = client.post(redirect_url, login_data, format="json")
+        else:
+            response = login_response
+        assert response.data == {'error': '이메일 혹은 비밀번호가 유효하지 않습니다.'}
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

@@ -93,6 +93,103 @@ class TestArticleEndpoints:
         assert delete_response.status_code == status.HTTP_204_NO_CONTENT
 
 
+class TestFailArticleEndpoints:
+    # create post
+    def test_create_post(self, article_factory):
+        register_endpoint = "/api/user/register/"
+        login_endpoint = "/api/user/login/"
+
+        # Register the user
+        client = APIClient()
+        registration_data = {
+            "email": "test@example.com",
+            "password": "testpassword",
+        }
+        registration_response = client.post(register_endpoint, registration_data)
+        if registration_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
+            redirect_url = registration_response.url
+            response = client.post(redirect_url, registration_data, format="json")
+        else:
+            response = registration_response
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        # Login with the registered user
+        login_data = {
+            "email": "test@example.com",
+            "password": "testpassword",
+        }
+        login_response = client.post(login_endpoint, login_data)
+        if login_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
+            redirect_url = login_response.url
+            response = client.post(redirect_url, login_data, format="json")
+        else:
+            response = login_response
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "access_token" in response.data
+        assert "refresh_token" in response.data
+
+        # print(f"access_token : {response.data['access_token']}")
+
+        # Create article with wrong tokken
+        access_token = response.data['access_token']
+        article_endpoint = "/api/article/create_post/"
+        data = {
+            "title": "Test Article",
+            "content": "This is a test article.",
+        }
+        # success post for patch test
+        success_article_response = client.post(
+            article_endpoint,
+            data,
+            HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
+
+        # fail post
+        wrong_token = 'fake_token'
+
+        article_response = client.post(
+            article_endpoint,
+            data,
+            HTTP_AUTHORIZATION=f"Bearer {wrong_token}"
+        )
+
+        if article_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
+            redirect_url = article_response.url
+            response = client.post(redirect_url, data, format="json")
+
+        else:
+            response = article_response
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+        # Update the article using PATCH method with id, but wrong token
+
+        article_id = success_article_response.data['id']
+        update_endpoint = f"/api/article/{article_id}/update_article/"
+        update_data = {
+            "title": "Updated Test Article",
+            "content": "This is the updated test article content.",
+        }
+        update_response = client.patch(
+            update_endpoint,
+            update_data,
+            HTTP_AUTHORIZATION=f"Bearer {wrong_token}"
+        )
+        assert update_response.status_code == status.HTTP_401_UNAUTHORIZED
+
+        # Delete the article using Delete method with id, but wrong token
+        article_id = success_article_response.data['id']
+        delete_endpoint = f"/api/article/{article_id}/delete_article/"
+
+        delete_response = client.delete(
+            delete_endpoint,
+            HTTP_AUTHORIZATION=f"Bearer {wrong_token}"
+        )
+        assert delete_response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
 class GetArticleList:
 
     # Get Article list with pagination
@@ -101,7 +198,7 @@ class GetArticleList:
         client = APIClient()
 
         article_factory.create_batch(3)
-        print(article_factory)
+
         response = client.get(url)
         assert response.status_code == status.HTTP_200_OK
 
