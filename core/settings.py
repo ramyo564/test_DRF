@@ -84,18 +84,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-
-# # test
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'mysql.connector.django',
-#         'NAME': 'wanted',
-#         'USER': 'root',
-#         'PASSWORD': '1234',
-#         'HOST': 'localhost',  # 예: 'localhost'
-#         'PORT': '3306',  # 예: '3306'
-#     }
-# }
+# AWS DB test
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'WANTED',
+        'USER': os.environ.get('DB_USER_NAME'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
+    }
+}
 
 #  로컬 테스트
 
@@ -124,17 +126,6 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 #     }
 # }
 
-# local MySql 테스트
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wanted',
-        'USER': 'root',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',  # 또는 MySQL 호스트 주소
-        'PORT': '3306',       # MySQL 포트 번호
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
