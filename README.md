@@ -684,7 +684,7 @@ Code 404 Error: Not Found
 ![테스트코드](https://github.com/ramyo564/wanted-pre-onboarding-backend/assets/103474568/4f4efab0-852e-4347-ae70-5df459b599ab)
 pytest를 통해 모델과 엔드포인트 테스트를 진행했습니다.  
 
-테스트 코드를 작성하면서 그 동안 제가 알고 있었다고 착각하고 있었던 부분도 많이 되어서 정말 좋은 시간이였습니다!
+테스트 코드를 작성하면서 그 동안 제가 알고 있었다고 착각하고 있었던 부분들을 다시 한 번 알게 되어서 정말 좋은 시간이였습니다!
 
 
 ### 2. 🚀 AWS EC2 배포
