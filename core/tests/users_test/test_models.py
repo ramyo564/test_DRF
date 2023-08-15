@@ -5,6 +5,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestCustomUserModel:
+
     # Email address without at
     def test_invalid_email(self, custom_user_factory):
         email = custom_user_factory(email="asdasdasd.com")
@@ -17,4 +18,3 @@ class TestCustomUserModel:
         obj = custom_user_factory(password=password)
         with pytest.raises(ValidationError):
             obj.full_clean()
-
