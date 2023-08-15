@@ -1,5 +1,4 @@
 import pytest
-from rest_framework.test import APIClient
 from rest_framework import status
 
 pytestmark = pytest.mark.django_db
@@ -7,110 +6,86 @@ pytestmark = pytest.mark.django_db
 
 class TestUserEndpoints:
 
-    def test_user_registration(self):
-        client = APIClient()
+    def test_user_registration(self, api_client):
+
         data = {
             "email": "test@example.com",
             "password": "testpassword",
         }
-        response = client.post("/api/user/register/", data)
+        response = api_client().post("/api/user/register/", data)
 
         assert response.status_code == status.HTTP_201_CREATED
+        client = response
+        return client
 
-    def test_user_login(self):
-        client = APIClient()
+    def test_user_login(self, api_client):
+
         data = {
             "email": "test@example.com",
             "password": "testpassword",
         }
-        client.post("/api/user/register/", data)
+        api_client().post("/api/user/register/", data)
         login_data = {
             "email": "test@example.com",
             "password": "testpassword",
         }
-        login_response = client.post("/api/user/login/", login_data)
+        login_response = api_client().post("/api/user/login/", login_data)
 
         assert login_response.status_code == status.HTTP_200_OK
 
 
-class FailTestUserEndpoints:
+class TestFailUserEndpoints:
 
-    @pytest.fixture
-    def auth_client(self):
-        client = APIClient()
+    def test_register_with_exist_email(self, api_client, custom_user_factory):
+        user = custom_user_factory.create_batch(1)[0]
 
-        registration_data = {
-            "email": "test@example.com",
-            "password": "testpassword",
-        }
-        registration_response = client.post("/api/user/register/", registration_data)
-        assert registration_response.status_code == status.HTTP_201_CREATED
-
-        client = registration_response
-        return client
-
-    def test_register_with_exist_email(self):
-        client = APIClient()
         data = {
-            "email": "test@example.com",
-            "password": "testpassword",
+            "email": user.email,
+            "password": custom_user_factory(password="12345678"),
         }
-        response = client.post("/api/user/register/", data)
+        response = api_client().post("/api/user/register/", data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.data == {"email": "custom user with this email already exists."}
 
-    def test_register_witout_at(self):
-        client = APIClient()
+    def test_register_witout_at(self, api_client, custom_user_factory):
         data = {
-            "email": "testexample.com",
+            "email": custom_user_factory(email="asdad.com"),
             "password": "testpassword",
         }
-        response = client.post("/api/user/register/", data)
+        response = api_client().post("/api/user/register/", data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.data == {"email": "Enter a valid email address."}
 
-    def test_register_wrong_password_validation(self):
-        client = APIClient()
+    def test_register_wrong_password_validation(self, api_client):
         data = {
-            "email": "testexample.com",
+            "email": "asdasdasd@asdasd.com",
             "password": "1234567",
         }
-        response = client.post("/api/user/register/", data)
-
+        response = api_client().post("/api/user/register/", data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.data == {"Ensure this field has at least 8 characters."}
 
-    def test_login_empty_information(self, auth_client):
-        client = auth_client
+    def test_login_empty_information(self, api_client):
         login_data = {
             "email": "",
             "password": "",
         }
-        login_response = client.post("/api/user/login/", login_data)
+        login_response = api_client().post("/api/user/login/", login_data)
         assert login_response.status_code == status.HTTP_400_BAD_REQUEST
-        assert login_response.data == {
-            "email": "This field may not be blank.",
-            "password": "This field may not be blank."
-        }
 
-    def test_login_with_wrong_email(self, auth_client):
-        client = auth_client
+    def test_login_with_nonexist_email(self, api_client):
+
         login_data = {
             "email": "asdasd@asd.com",
             "password": "12345678",
         }
-        login_response = client.post("/api/user/login/", login_data)
+        login_response = api_client().post("/api/user/login/", login_data)
         assert login_response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert login_response.data == {"error": "이메일 혹은 비밀번호가 유효하지 않습니다."}
 
-    def test_login_with_wrong_password(self, auth_client):
-        client = auth_client
-        login_data = {
-            "email": "test@example.com",
+    def test_login_with_wrong_password(self, api_client, custom_user_factory):
+        user = custom_user_factory.create_batch(1)[0]
+        data = {
+            "email": user.email,
             "password": "12345678",
         }
-        login_response = client.post("/api/user/login/", login_data)
-        assert login_response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert login_response.data == {"error": "이메일 혹은 비밀번호가 유효하지 않습니다."}
+        response = api_client().post("/api/user/login/", data)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED

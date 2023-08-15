@@ -17,3 +17,4 @@ class TestCustomUserModel:
         obj = custom_user_factory(password=password)
         with pytest.raises(ValidationError):
             obj.full_clean()
+
