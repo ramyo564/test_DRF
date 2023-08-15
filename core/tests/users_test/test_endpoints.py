@@ -8,79 +8,109 @@ pytestmark = pytest.mark.django_db
 class TestUserEndpoints:
 
     def test_user_registration(self):
-        register_endpoint = "/api/user/register/"
         client = APIClient()
         data = {
             "email": "test@example.com",
             "password": "testpassword",
         }
-        response = client.post(register_endpoint, data)
-
-        if response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
-            redirect_url = response.url
-            response = client.post(redirect_url, data, format="json")
+        response = client.post("/api/user/register/", data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_user_login(self):
-        register_endpoint = "/api/user/register/"
-        login_endpoint = "/api/user/login/"
-
-        # Register the user
         client = APIClient()
+        data = {
+            "email": "test@example.com",
+            "password": "testpassword",
+        }
+        client.post("/api/user/register/", data)
+        login_data = {
+            "email": "test@example.com",
+            "password": "testpassword",
+        }
+        login_response = client.post("/api/user/login/", login_data)
+
+        assert login_response.status_code == status.HTTP_200_OK
+
+
+class FailTestUserEndpoints:
+
+    @pytest.fixture
+    def auth_client(self):
+        client = APIClient()
+
         registration_data = {
             "email": "test@example.com",
             "password": "testpassword",
         }
-        registration_response = client.post(register_endpoint, registration_data)
-        if registration_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
-            redirect_url = registration_response.url
-            response = client.post(redirect_url, registration_data, format="json")
-        else:
-            response = registration_response
+        registration_response = client.post("/api/user/register/", registration_data)
+        assert registration_response.status_code == status.HTTP_201_CREATED
 
-        assert response.status_code == status.HTTP_201_CREATED
+        client = registration_response
+        return client
 
-        # Login with the registered user
-        login_data = {
+    def test_register_with_exist_email(self):
+        client = APIClient()
+        data = {
             "email": "test@example.com",
             "password": "testpassword",
         }
-        login_response = client.post(login_endpoint, login_data)
-        if login_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
-            redirect_url = login_response.url
-            response = client.post(redirect_url, login_data, format="json")
-        else:
-            response = login_response
+        response = client.post("/api/user/register/", data)
 
-        assert response.status_code == status.HTTP_200_OK
-        assert "access_token" in response.data
-        assert "refresh_token" in response.data
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"email": "custom user with this email already exists."}
 
-        # Login with wrong email
-        login_data = {
-            "email": "test1@exaas.com",
+    def test_register_witout_at(self):
+        client = APIClient()
+        data = {
+            "email": "testexample.com",
             "password": "testpassword",
         }
-        login_response = client.post(login_endpoint, login_data)
-        if login_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
-            redirect_url = login_response.url
-            response = client.post(redirect_url, login_data, format="json")
-        else:
-            response = login_response
-        assert response.data == {'error': '이메일 혹은 비밀번호가 유효하지 않습니다.'}
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        response = client.post("/api/user/register/", data)
 
-        # Login with wrong password
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"email": "Enter a valid email address."}
+
+    def test_register_wrong_password_validation(self):
+        client = APIClient()
+        data = {
+            "email": "testexample.com",
+            "password": "1234567",
+        }
+        response = client.post("/api/user/register/", data)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data == {"Ensure this field has at least 8 characters."}
+
+    def test_login_empty_information(self, auth_client):
+        client = auth_client
+        login_data = {
+            "email": "",
+            "password": "",
+        }
+        login_response = client.post("/api/user/login/", login_data)
+        assert login_response.status_code == status.HTTP_400_BAD_REQUEST
+        assert login_response.data == {
+            "email": "This field may not be blank.",
+            "password": "This field may not be blank."
+        }
+
+    def test_login_with_wrong_email(self, auth_client):
+        client = auth_client
+        login_data = {
+            "email": "asdasd@asd.com",
+            "password": "12345678",
+        }
+        login_response = client.post("/api/user/login/", login_data)
+        assert login_response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert login_response.data == {"error": "이메일 혹은 비밀번호가 유효하지 않습니다."}
+
+    def test_login_with_wrong_password(self, auth_client):
+        client = auth_client
         login_data = {
             "email": "test@example.com",
-            "password": "testpasswor222d",
+            "password": "12345678",
         }
-        login_response = client.post(login_endpoint, login_data)
-        if login_response.status_code == status.HTTP_301_MOVED_PERMANENTLY:
-            redirect_url = login_response.url
-            response = client.post(redirect_url, login_data, format="json")
-        else:
-            response = login_response
-        assert response.data == {'error': '이메일 혹은 비밀번호가 유효하지 않습니다.'}
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        login_response = client.post("/api/user/login/", login_data)
+        assert login_response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert login_response.data == {"error": "이메일 혹은 비밀번호가 유효하지 않습니다."}

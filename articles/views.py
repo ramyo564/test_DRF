@@ -6,6 +6,7 @@ from .serializers import ArticleSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import serializers
+from django.shortcuts import get_object_or_404
 
 
 class CustomPagination(PageNumberPagination):
@@ -19,6 +20,15 @@ class CustomPagination(PageNumberPagination):
 class ArticleListViewSet(viewsets.ReadOnlyModelViewSet):
     """
     게시글 목록을 조회하는 ViewSet class 입니다.
+
+        매개변수: (게시글, 혹은 페이지 넘버)
+        - id (int): 게시글 id, 페이지 넘버
+
+        반환값:
+        - 생성된 게시글 정보
+
+        오류:
+        - 404 Bad Not Found: 게시글이 존재하지 않는 경우.
     """
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
@@ -30,6 +40,7 @@ class ArticleListViewSet(viewsets.ReadOnlyModelViewSet):
 
         Returns:
             CustomArticleSerializer: 'author' 필드를 추가한 시리얼라이저 클래스입니다.
+
         """
         class CustomArticleSerializer(serializers.ModelSerializer):
             author = serializers.CharField(source='author.email', read_only=True)
@@ -67,7 +78,7 @@ class ArticleViewSet(viewsets.ViewSet):
         return context
 
     @action(detail=False, methods=['post'])
-    def create_post(self, request):
+    def create_article(self, request):
         """
         새 게시글을 생성합니다.
 
@@ -80,6 +91,7 @@ class ArticleViewSet(viewsets.ViewSet):
 
         오류:
             - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
+            - 401 Unauthorized: 로그인 하지 않았을 경우
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -101,9 +113,11 @@ class ArticleViewSet(viewsets.ViewSet):
 
         오류:
             - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
+            - 401 Unauthorized: 로그인 하지 않았을 경우
             - 403 Forbidden: 게시글 작성자가 아닌 사용자가 수정을 시도한 경우.
+            - 404 Not Found: 게시글이 존재하지 않는 경우.
         """
-        article = Article.objects.get(pk=pk)
+        article = get_object_or_404(Article, pk=pk)
 
         if article.author != request.user:
             return Response(
@@ -130,8 +144,9 @@ class ArticleViewSet(viewsets.ViewSet):
 
         오류:
             - 403 Forbidden: 게시글 작성자가 아닌 사용자가 삭제를 시도한 경우.
+            - 404 Not Found: 게시글이 존재하지 않는 경우.
         """
-        article = Article.objects.get(pk=pk)
+        article = get_object_or_404(Article, pk=pk)
 
         if article.author != request.user:
             return Response(

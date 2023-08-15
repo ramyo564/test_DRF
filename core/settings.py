@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG")
+
 ALLOWED_HOSTS = ['*']
 
 
@@ -82,7 +82,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+# AWS SECRET_KEY
 SECRET_KEY = os.environ.get("SECRET_KEY")
+
+# DEBUG
+DEBUG = os.environ.get("DEBUG")
 
 # AWS DB test
 DATABASES = {
@@ -99,19 +104,16 @@ DATABASES = {
     }
 }
 
-#  로컬 테스트
+# 로컬 테스트
+# 로컬 mysql을 연결한 후 python manage.py migrate 를 실행해주시면 됩니다.
+# 위에 있는 "os.environ.get("SECRET_KEY" 는 비활성화,
+# 아래의 SECRET_KEY와 DEBUG, DATABASES 설정 완료 후 활성화 하면 로컬에서도 테스트 가능합니다.
 
-# articles, users 각각 폴더 안의 migrations 의 __init__.py 를 제외한 0001_initial.py 파일들을 삭제해주세요
-# 로컬 혹은 mysql을 연결한 후 python manage.py makemigrations -> python manage.py migrate 를 실행해주시면 됩니다.
-# 위에 있는 "os.environ.get("SECRET_KEY"" 는 비활성화, 아래의 SECRET_KEY와 t설정에 맞는 데이터베이스를 활성화 해주세요
-
+# 시크릿 키
 # SECRET_KEY = 'django-insecure-uuy^a395%$pujr991+ou&*sj@=$q^gal1i6cy0t&lycpye4^)i'
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
+
+# DEBUG
+# DEBUG = True
 
 # MySql 테스트
 
@@ -160,11 +162,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-STATIC_ROOT = BASE_DIR / 'static'
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    "core/static",
-]
+\
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
