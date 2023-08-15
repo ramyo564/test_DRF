@@ -83,26 +83,30 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# AWS SECRET_KEY
-SECRET_KEY = os.environ.get("SECRET_KEY")
+#################################################################################################
 
-# DEBUG
-DEBUG = os.environ.get("DEBUG")
+# # AWS SECRET_KEY
+# SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# AWS DB test
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'WANTED',
-        'USER': os.environ.get('DB_USER_NAME'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        }
-    }
-}
+# # DEBUG
+# DEBUG = os.environ.get("DEBUG")
+
+# # AWS DB test
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'WANTED',
+#         'USER': os.environ.get('DB_USER_NAME'),
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         'HOST': os.environ.get('DB_HOST'),
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         }
+#     }
+# }
+
+#################################################################################################
 
 # 로컬 테스트
 # 로컬 mysql을 연결한 후 python manage.py migrate 를 실행해주시면 됩니다.
@@ -110,24 +114,25 @@ DATABASES = {
 # 아래의 SECRET_KEY와 DEBUG, DATABASES 설정 완료 후 활성화 하면 로컬에서도 테스트 가능합니다.
 
 # 시크릿 키
-# SECRET_KEY = 'django-insecure-uuy^a395%$pujr991+ou&*sj@=$q^gal1i6cy0t&lycpye4^)i'
+SECRET_KEY = 'django-insecure-uuy^a395%$pujr991+ou&*sj@=$q^gal1i6cy0t&lycpye4^)i'
 
-# DEBUG
-# DEBUG = True
+# DEBUG 환경
+DEBUG = True
 
 # MySql 테스트
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'name 입력',
-#         'USER': 'root',
-#         'PASSWORD': 'password 입력',
-#         'HOST': 'localhost',  # 또는 MySQL 호스트 주소
-#         'PORT': '3306',       # MySQL 포트 번호
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'name 입력',
+        'USER': 'root',
+        'PASSWORD': 'password 입력',
+        'HOST': 'localhost',  # 또는 MySQL 호스트 주소
+        'PORT': '3306',       # MySQL 포트 번호
+    }
+}
 
+#################################################################################################
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

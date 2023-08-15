@@ -26,15 +26,15 @@ class UserViewSet(ViewSet):
         """
         새 사용자를 등록합니다.
 
-        매개변수:
-            - email (str): 사용자의 이메일.
-            - password (str): 사용자의 비밀번호.
+            매개변수:
+                - email (str): 사용자의 이메일.
+                - password (str): 사용자의 비밀번호.
 
-        반환값:
-            - message: 사용자 등록이 성공한 경우의 메시지.
+            반환값:
+                - message: 사용자 등록이 성공한 경우의 메시지.
 
-        오류:
-            - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
+            오류:
+                - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
         """
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -57,18 +57,18 @@ class UserViewSet(ViewSet):
         """
         사용자를 로그인하고 액세스 및 리프레시 토큰을 생성합니다.
 
-        매개변수:
-            - email (str): 사용자의 이메일.
-            - password (str): 사용자의 비밀번호.
+            매개변수:
+                - email (str): 사용자의 이메일.
+                - password (str): 사용자의 비밀번호.
 
-        반환값:
-            - access_token: 인증을 위한 JWT 액세스 토큰.
-            - refresh_token: 새로운 액세스 토큰을 얻기 위한 리프레시 토큰.
-            - message: 로그인이 성공한 경우의 메시지.
+            반환값:
+                - access_token: 인증을 위한 JWT 액세스 토큰.
+                - refresh_token: 새로운 액세스 토큰을 얻기 위한 리프레시 토큰.
+                - message: 로그인이 성공한 경우의 메시지.
 
-        오류:
-            - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
-            - 401 Unauthorized: 이메일 또는 비밀번호가 유효하지 않은 경우.
+            오류:
+                - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
+                - 401 Unauthorized: 이메일 또는 비밀번호가 유효하지 않은 경우.
         """
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():

@@ -38,8 +38,8 @@ class ArticleListViewSet(viewsets.ReadOnlyModelViewSet):
         """
         게시글을 조회하는 데 사용할 시리얼라이저 클래스를 반환합니다.
 
-        Returns:
-            CustomArticleSerializer: 'author' 필드를 추가한 시리얼라이저 클래스입니다.
+            Returns:
+                CustomArticleSerializer: 'author' 필드를 추가한 시리얼라이저 클래스입니다.
 
         """
         class CustomArticleSerializer(serializers.ModelSerializer):
@@ -82,16 +82,16 @@ class ArticleViewSet(viewsets.ViewSet):
         """
         새 게시글을 생성합니다.
 
-        매개변수:
-            - title (str): 게시글 제목
-            - content (str): 게시글 내용
+            매개변수:
+                - title (str): 게시글 제목
+                - content (str): 게시글 내용
 
-        반환값:
-            - 생성된 게시글 정보
+            반환값:
+                - 생성된 게시글 정보
 
-        오류:
-            - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
-            - 401 Unauthorized: 로그인 하지 않았을 경우
+            오류:
+                - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
+                - 401 Unauthorized: 로그인 하지 않았을 경우
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -103,19 +103,19 @@ class ArticleViewSet(viewsets.ViewSet):
         """
         기존 게시글을 수정합니다.
 
-        매개변수:
-            - pk (int): 수정할 게시글의 고유 ID
-            - title (str): 수정할 게시글 제목
-            - content (str): 수정할 게시글 내용
+            매개변수:
+                - pk (int): 수정할 게시글의 고유 ID
+                - title (str): 수정할 게시글 제목
+                - content (str): 수정할 게시글 내용
 
-        반환값:
-            - 수정된 게시글 정보
+            반환값:
+                - 수정된 게시글 정보
 
-        오류:
-            - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
-            - 401 Unauthorized: 로그인 하지 않았을 경우
-            - 403 Forbidden: 게시글 작성자가 아닌 사용자가 수정을 시도한 경우.
-            - 404 Not Found: 게시글이 존재하지 않는 경우.
+            오류:
+                - 400 Bad Request: 제공된 데이터가 유효하지 않은 경우.
+                - 401 Unauthorized: 로그인 하지 않았을 경우
+                - 403 Forbidden: 게시글 작성자가 아닌 사용자가 수정을 시도한 경우.
+                - 404 Not Found: 게시글이 존재하지 않는 경우.
         """
         article = get_object_or_404(Article, pk=pk)
 
@@ -136,15 +136,15 @@ class ArticleViewSet(viewsets.ViewSet):
         """
         게시글을 삭제합니다.
 
-        매개변수:
-            - pk (int): 삭제할 게시글의 고유 ID
+            매개변수:
+                - pk (int): 삭제할 게시글의 고유 ID
 
-        반환값:
-            - 삭제 성공 시 204 No Content 반환
+            반환값:
+                - 삭제 성공 시 204 No Content 반환
 
-        오류:
-            - 403 Forbidden: 게시글 작성자가 아닌 사용자가 삭제를 시도한 경우.
-            - 404 Not Found: 게시글이 존재하지 않는 경우.
+            오류:
+                - 403 Forbidden: 게시글 작성자가 아닌 사용자가 삭제를 시도한 경우.
+                - 404 Not Found: 게시글이 존재하지 않는 경우.
         """
         article = get_object_or_404(Article, pk=pk)
 
