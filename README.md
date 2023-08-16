@@ -212,7 +212,7 @@ http://127.0.0.1:8000/admin/
 
 ## 4️. 구현한 API의 동작을 촬영한 데모 영상 링크
 
-[데모 영상 링크](https://drive.google.com/file/d/13pSKPmodLz71K3XdAlkvbhOxyz1IwkS_/view) 
+영상 링크 ->[데모 영상 링크](https://drive.google.com/file/d/13pSKPmodLz71K3XdAlkvbhOxyz1IwkS_/view) 
   
 AWS 링크 -> https://yohanyohan.com/api/schema/docs/    
 자유롭게 테스트 가능합니다!     
